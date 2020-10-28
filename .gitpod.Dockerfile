@@ -6,7 +6,8 @@
 # this local repo which is also published at:
 # https://github.com/instructure/canvas-lms/tree/master/doc/docker
 ARG RUBY_PASSENGER=2.6
-FROM instructure/ruby-passenger:$RUBY_PASSENGER
+#FROM instructure/ruby-passenger:$RUBY_PASSENGER
+FROM gitpod/workspace-full
 ARG POSTGRES=9.5
 
 ENV APP_HOME /usr/src/app/
@@ -111,7 +112,7 @@ RUN mkdir -p .yardoc \
 RUN bundle lock --local --conservative
 
 # TODO: switch to canvas:compile_assets_dev once we stop using this Dockerfile in production/e2e
-RUN COMPILE_ASSETS_NPM_INSTALL=0 bundle exec rake canvas:compile_assets
+RUN COMPILE_ASSETS_NPM_INSTALL=1 bundle exec rake canvas:compile_assets
 
 RUN sudo apt-get update \
  && sudo apt-get install -y postgresql-12 postgresql-contrib-12 \
@@ -134,6 +135,3 @@ ENV PGDATABASE="postgres"
 # tasks from a Dockerfile. This workaround checks, on each bashrc eval, if the
 # PostgreSQL server is running, and if not starts it.
 RUN printf "\n# Auto-start PostgreSQL server.\n[[ \$(pg_ctl status | grep PID) ]] || pg_start > /dev/null\n" >> ~/.bashrc
-# GENERATED FILE, DO NOT MODIFY!
-# To update this file please edit the relevant template and run the generation
-# task `build/dockerfile_writer.rb --env development --compose-file docker-compose.yml,docker-compose.override.yml --in build/ubuntu.Dockerfile.template --out ubuntu.development.Dockerfile`
